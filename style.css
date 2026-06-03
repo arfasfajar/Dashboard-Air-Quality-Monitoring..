@@ -1,0 +1,417 @@
+/* ================================
+   AQM - DASHBOARD KUALITAS UDARA
+   style.css — Light Mode Edition
+   ================================ */
+
+/* --- RESET & BASE --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark:      #f0f5f9;
+  --bg-card:      #ffffff;
+  --bg-card2:     #e8eef4;
+  --border:       rgba(0,0,0,0.08);
+  --text-main:    #1a202c;
+  --text-muted:   #5a6478;
+  --accent:       #00a688;
+  --accent2:      #2f6fd4;
+  --good:         #00a688;
+  --moderate:     #d4a017;
+  --usg:          #c96f2a;
+  --unhealthy:    #c94040;
+  --very:         #9b35b0;
+  --hazardous:    #7d1b1b;
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    18px;
+  --shadow:       0 2px 12px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ================================
+   HEADER
+   ================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo { flex-shrink: 0; }
+
+.site-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.site-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.live-badge {
+  background: rgba(0,166,136,0.12);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,166,136,0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.update-time {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================
+   MAIN LAYOUT
+   ================================ */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ================================
+   SELECTOR BAR
+   ================================ */
+.selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.selector-bar label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.selector-bar select {
+  background: var(--bg-card2);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.selector-bar select:focus {
+  border-color: var(--accent);
+}
+
+.kota-label {
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* ================================
+   STAT CARDS GRID
+   ================================ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  border-color: rgba(0,0,0,0.14);
+}
+
+.card-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+  /* Transisi halus saat nilai berubah */
+  transition: color 0.3s;
+}
+
+/* AQI Card States — border kiri warna-warni */
+.aqi-card {
+  border-left: 4px solid var(--border); /* default sebelum JS jalan */
+}
+.aqi-good      { border-left: 4px solid var(--good) !important; }
+.aqi-moderate  { border-left: 4px solid var(--moderate) !important; }
+.aqi-usg       { border-left: 4px solid var(--usg) !important; }
+.aqi-unhealthy { border-left: 4px solid var(--unhealthy) !important; }
+.aqi-hazardous { border-left: 4px solid var(--hazardous) !important; }
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  width: fit-content;
+  /* Transisi saat badge berganti kota */
+  transition: background 0.3s, color 0.3s;
+}
+
+.badge-good      { background: rgba(0,166,136,0.14);  color: var(--good); }
+.badge-moderate  { background: rgba(212,160,23,0.14); color: var(--moderate); }
+.badge-usg       { background: rgba(201,111,42,0.14); color: var(--usg); }
+.badge-unhealthy { background: rgba(201,64,64,0.14);  color: var(--unhealthy); }
+.badge-hazardous { background: rgba(125,27,27,0.12);  color: #a03030; }
+
+/* MINI PROGRESS BARS */
+.bar-wrap {
+  background: rgba(0,0,0,0.06);
+  border-radius: 99px;
+  height: 5px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.pm25-fill  { background: linear-gradient(90deg, #4f8ef7, #f75f5f); }
+.pm10-fill  { background: linear-gradient(90deg, #00a688, #d4a017); }
+.co-fill    { background: linear-gradient(90deg, #d4a017, #f75f5f); }
+.humid-fill { background: linear-gradient(90deg, #4f8ef7, #00a688); }
+.temp-fill  { background: linear-gradient(90deg, #d4a017, #f75f5f); }
+
+/* ================================
+   CHARTS LAYOUT
+   ================================ */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1rem;
+}
+
+/* .wide dan .narrow tidak dipakai di HTML tapi tetap disimpan untuk kompatibilitas */
+.chart-card.wide   { grid-column: auto; }
+.chart-card.narrow { grid-column: auto; }
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  /* Pastikan chart tidak meluber keluar card */
+  overflow: hidden;
+  min-width: 0;
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-header h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.chart-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  /* Mencegah canvas meluber */
+  min-height: 0;
+}
+
+/* Canvas Chart.js harus mengikuti container */
+.chart-wrap canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Donut Legend */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ================================
+   INFO PANEL
+   ================================ */
+.info-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.info-box h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+.info-box p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* AQI SCALE */
+.aqi-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.aqi-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.aqi-item.good           { background: rgba(0,166,136,0.10);  color: var(--good); }
+.aqi-item.moderate       { background: rgba(212,160,23,0.10); color: var(--moderate); }
+.aqi-item.usg            { background: rgba(201,111,42,0.10); color: var(--usg); }
+.aqi-item.unhealthy      { background: rgba(201,64,64,0.10);  color: var(--unhealthy); }
+.aqi-item.very-unhealthy { background: rgba(155,53,176,0.10); color: var(--very); }
+.aqi-item.hazardous      { background: rgba(125,27,27,0.10);  color: #a03030; }
+
+/* ================================
+   FOOTER
+   ================================ */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+@media (max-width: 900px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .info-panel { grid-template-columns: 1fr; }
+  .main       { padding: 1rem; }
+  .header     { padding: 0.75rem 1rem; }
+}
+
+@media (max-width: 600px) {
+  .cards-grid   { grid-template-columns: 1fr 1fr; }
+  .site-title   { font-size: 1.1rem; }
+  .card-value   { font-size: 1.6rem; }
+  .selector-bar { flex-wrap: wrap; }
+  .kota-label   { width: 100%; margin-left: 0; }
+}
