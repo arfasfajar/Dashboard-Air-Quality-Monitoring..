@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Kualitas Udara - AQM</title>
+  <style>
+/* ================================
+   AQM - DASHBOARD KUALITAS UDARA
+   style.css - Light Mode Edition
+   ================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark:      #f0f5f9;
+  --bg-card:      #ffffff;
+  --bg-card2:     #e8eef4;
+  --border:       rgba(0,0,0,0.08);
+  --text-main:    #1a202c;
+  --text-muted:   #5a6478;
+  --accent:       #00a688;
+  --accent2:      #2f6fd4;
+  --good:         #00a688;
+  --moderate:     #d4a017;
+  --usg:          #c96f2a;
+  --unhealthy:    #c94040;
+  --very:         #9b35b0;
+  --hazardous:    #7d1b1b;
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    18px;
+  --shadow:       0 2px 12px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+  --bg-dark:    #0f1117;
+  --bg-card:    #1a1f2e;
+  --bg-card2:   #242938;
+  --border:     rgba(255,255,255,0.08);
+  --text-main:  #e8edf5;
+  --text-muted: #8a94a8;
+  --shadow:     0 2px 12px rgba(0,0,0,0.35);
+}
+
+.theme-toggle {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .toggle-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo { flex-shrink: 0; }
+
+.site-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.site-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.live-badge {
+  background: rgba(0,166,136,0.12);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,166,136,0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.update-time {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* MAIN LAYOUT */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* SELECTOR BAR */
+.selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.selector-bar label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.selector-bar select {
+  background: var(--bg-card2);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.selector-bar select:focus {
+  border-color: var(--accent);
+}
+
+.kota-label {
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* STAT CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  border-color: rgba(0,0,0,0.14);
+}
+
+.card-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.aqi-card {
+  border-left: 4px solid var(--border);
+}
+.aqi-good      { border-left: 4px solid var(--good) !important; }
+.aqi-moderate  { border-left: 4px solid var(--moderate) !important; }
+.aqi-usg       { border-left: 4px solid var(--usg) !important; }
+.aqi-unhealthy { border-left: 4px solid var(--unhealthy) !important; }
+.aqi-hazardous { border-left: 4px solid var(--hazardous) !important; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  width: fit-content;
+  transition: background 0.3s, color 0.3s;
+}
+
+.badge-good      { background: rgba(0,166,136,0.14);  color: var(--good); }
+.badge-moderate  { background: rgba(212,160,23,0.14); color: var(--moderate); }
+.badge-usg       { background: rgba(201,111,42,0.14); color: var(--usg); }
+.badge-unhealthy { background: rgba(201,64,64,0.14);  color: var(--unhealthy); }
+.badge-hazardous { background: rgba(125,27,27,0.12);  color: #a03030; }
+
+.bar-wrap {
+  background: rgba(0,0,0,0.06);
+  border-radius: 99px;
+  height: 5px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.pm25-fill  { background: linear-gradient(90deg, #4f8ef7, #f75f5f); }
+.pm10-fill  { background: linear-gradient(90deg, #00a688, #d4a017); }
+.co-fill    { background: linear-gradient(90deg, #d4a017, #f75f5f); }
+.humid-fill { background: linear-gradient(90deg, #4f8ef7, #00a688); }
+.temp-fill  { background: linear-gradient(90deg, #d4a017, #f75f5f); }
+
+/* CHARTS LAYOUT */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1rem;
+}
+
+.charts-single {
+  grid-template-columns: 1fr !important;
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.chart-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-header h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.chart-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ================================
+   TOMBOL INFO ⓘ
+   ================================ */
+.info-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  line-height: 1;
+}
+
+.info-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0,166,136,0.08);
+}
+
+/* Panel info chart */
+.chart-info-panel {
+  display: none;
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  animation: fadeIn 0.15s ease;
+}
+
+.chart-info-panel.visible {
+  display: block;
+}
+
+.chart-info-panel strong {
+  color: var(--text-main);
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.82rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+
+.chart-wrap canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Donut Legend */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ================================
+   INFO PANEL (bawah)
+   FIX: hilangkan height tetap, biarkan auto
+   ================================ */
+.info-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  /* align-items supaya dua box tidak stretch paksa */
+  align-items: start;
+}
+
+.info-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  /* PERBAIKAN: tidak ada height atau min-height paksa */
+}
+
+.info-box h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+.info-box p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* AQI SCALE */
+.aqi-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.aqi-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.aqi-item.good           { background: rgba(0,166,136,0.10);  color: var(--good); }
+.aqi-item.moderate       { background: rgba(212,160,23,0.10); color: var(--moderate); }
+.aqi-item.usg            { background: rgba(201,111,42,0.10); color: var(--usg); }
+.aqi-item.unhealthy      { background: rgba(201,64,64,0.10);  color: var(--unhealthy); }
+.aqi-item.very-unhealthy { background: rgba(155,53,176,0.10); color: var(--very); }
+.aqi-item.hazardous      { background: rgba(125,27,27,0.10);  color: #a03030; }
+
+/* ================================
+   TOMBOL BAGIKAN
+   ================================ */
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,166,136,0.25);
+  margin-left: auto;
+}
+.share-btn:hover {
+  background: #008f74;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,166,136,0.35);
+}
+.share-btn svg { flex-shrink: 0; }
+
+/* ================================
+   MODAL SHARE
+   ================================ */
+.share-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+.share-overlay.open { display: flex; animation: overlayIn 0.2s ease; }
+@keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
+
+.share-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: modalIn 0.22s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes modalIn {
+  from { opacity:0; transform: scale(0.92) translateY(12px); }
+  to   { opacity:1; transform: scale(1)    translateY(0); }
+}
+
+.share-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.share-modal-header h3 { font-size:1rem; font-weight:700; color:var(--text-main); }
+.share-close {
+  background: none; border: none; font-size:1.2rem;
+  color: var(--text-muted); cursor:pointer; line-height:1;
+  padding: 2px 6px; border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.share-close:hover { background: var(--bg-card2); color: var(--text-main); }
+
+.share-preview-wrap {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  line-height: 0;
+}
+.share-preview-wrap canvas { width:100%; height:auto; display:block; }
+
+.share-text-box {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  user-select: all;
+  cursor: text;
+}
+
+.share-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.share-action-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg-card2); color: var(--text-main);
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.share-action-btn:hover { border-color: var(--accent); background: rgba(0,166,136,0.07); transform: translateY(-1px); }
+.share-action-btn.primary { background: var(--accent); color:#fff; border-color:var(--accent); }
+.share-action-btn.primary:hover { background:#008f74; border-color:#008f74; }
+.share-action-btn.wa  { color:#25d366; border-color:rgba(37,211,102,0.3); }
+.share-action-btn.wa:hover  { background:rgba(37,211,102,0.08); border-color:#25d366; }
+.share-action-btn.tw  { color:#1d9bf0; border-color:rgba(29,155,240,0.3); }
+.share-action-btn.tw:hover  { background:rgba(29,155,240,0.08); border-color:#1d9bf0; }
+
+.copy-notif { display:none; text-align:center; font-size:0.75rem; color:var(--accent); font-weight:600; }
+.copy-notif.show { display:block; animation: fadeIn 0.2s ease; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .info-panel { grid-template-columns: 1fr; }
+  .main       { padding: 1rem; }
+  .header     { padding: 0.75rem 1rem; }
+}
+
+@media (max-width: 600px) {
+  .cards-grid   { grid-template-columns: 1fr 1fr; }
+  .site-title   { font-size: 1.1rem; }
+  .card-value   { font-size: 1.6rem; }
+  .selector-bar { flex-wrap: wrap; }
+  .kota-label   { width: 100%; margin-left: 0; }
+}
+</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#00a688"/>
+          <path d="M8 18c2-4 4-6 8-6s6 2 8 6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="16" cy="20" r="3" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="site-title">AQM</h1>
+        <p class="site-sub">Air Quality Monitoring</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">
+        <span class="toggle-icon" id="themeIcon">🌙</span>
+        <span id="themeLabel">Dark</span>
+      </button>
+      <span class="live-badge" id="live-status">&#9679; LIVE</span>
+      <span class="update-time" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- KOTA SELECTOR -->
+    <section class="selector-bar">
+      <label for="kota">Pilih Kota:</label>
+      <select id="kota" onchange="gantiKota(this.value)">
+        <option value="semarang">Semarang</option>
+        <option value="jakarta">Jakarta</option>
+        <option value="makassar">Makassar</option>
+        <option value="yogyakarta">Yogyakarta</option>
+        <option value="medan">Medan</option>
+      </select>
+      <span class="kota-label" id="kota-label">Semarang, Jawa Tengah</span>
+      <button class="share-btn" onclick="bukaShare()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        Bagikan Kondisi Udara
+      </button>
+    </section>
+
+    <!-- MODAL SHARE -->
+    <div class="share-overlay" id="shareOverlay" onclick="tutupShare(event)">
+      <div class="share-modal">
+        <div class="share-modal-header">
+          <h3>&#127968; Bagikan Kondisi Udara</h3>
+          <button class="share-close" onclick="tutupShare(null)">&#x2715;</button>
+        </div>
+        <!-- Preview grafis -->
+        <div class="share-preview-wrap">
+          <canvas id="shareCanvas" width="800" height="420"></canvas>
+        </div>
+        <!-- Teks siap salin -->
+        <div class="share-text-box" id="shareText"></div>
+        <!-- Notif salin -->
+        <div class="copy-notif" id="copyNotif">Teks berhasil disalin!</div>
+        <!-- Tombol aksi -->
+        <div class="share-actions">
+          <button class="share-action-btn primary" onclick="unduhGambar()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Gambar
+          </button>
+          <button class="share-action-btn" onclick="salinTeks()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Salin Teks
+          </button>
+          <button class="share-action-btn wa" onclick="shareWA()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.122 1.525 5.857L0 24l6.335-1.506A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.878 9.878 0 0 1-5.034-1.375l-.36-.214-3.762.894.952-3.67-.235-.376A9.865 9.865 0 0 1 2.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-action-btn tw" onclick="shareTwitter()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.636 5.903-5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X / Twitter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <section class="cards-grid">
+      <div class="stat-card aqi-card">
+        <p class="card-label">Indeks Kualitas Udara (AQI)</p>
+        <p class="card-value" id="aqi-val">68</p>
+        <span class="badge badge-moderate" id="aqi-status">Sedang</span>
+      </div>
+      <div class="stat-card">
+        <p class="card-label">PM2.5 (&mu;g/m&sup3;)</p>
+        <p class="card-value" id="pm25-val">32</p>
+        <div class="bar-wrap"><div class="bar-fill pm25-fill" id="pm25-bar" style="width:21%"></div></div>
+      </div>
+      <div class="stat-card">
+        <p class="card-label">PM10 (&mu;g/m&sup3;)</p>
+        <p class="card-value" id="pm10-val">54</p>
+        <div class="bar-wrap"><div class="bar-fill pm10-fill" id="pm10-bar" style="width:36%"></div></div>
+      </div>
+      <div class="stat-card">
+        <p class="card-label">CO (&mu;g/m&sup3;)</p>
+        <p class="card-value" id="co-val">0.7</p>
+        <div class="bar-wrap"><div class="bar-fill co-fill" id="co-bar" style="width:14%"></div></div>
+      </div>
+      <div class="stat-card">
+        <p class="card-label">Kelembapan (%)</p>
+        <p class="card-value" id="humid-val">70</p>
+        <div class="bar-wrap"><div class="bar-fill humid-fill" id="humid-bar" style="width:70%"></div></div>
+      </div>
+      <div class="stat-card">
+        <p class="card-label">Suhu (&deg;C)</p>
+        <p class="card-value" id="temp-val">30</p>
+        <div class="bar-wrap"><div class="bar-fill temp-fill" id="temp-bar" style="width:60%"></div></div>
+      </div>
+    </section>
+
+    <!-- CHARTS ROW -->
+    <section class="charts-row">
+
+      <!-- Chart 1: Tren AQI 7 Hari -->
+      <div class="chart-card wide">
+        <div class="chart-header">
+          <div class="chart-header-text">
+            <h2>Tren AQI 7 Hari Terakhir</h2>
+            <span class="chart-sub">Indeks Kualitas Udara Harian</span>
+          </div>
+          <button class="info-btn" onclick="toggleInfo('info-trend')" title="Tentang grafik ini">ⓘ</button>
+        </div>
+        <div class="chart-info-panel" id="info-trend">
+          <strong>Cara membaca grafik ini</strong>
+          Grafik garis menunjukkan nilai AQI (Indeks Kualitas Udara) harian selama 7 hari terakhir untuk kota yang dipilih. Latar belakang berwarna menunjukkan zona kualitas: <span style="color:#00a688">hijau = Baik (0–50)</span>, <span style="color:#d4a017">kuning = Sedang (51–100)</span>, <span style="color:#c94040">merah = Tidak Sehat (101–200)</span>. Label zona tertera di sisi kanan grafik. Semakin tinggi garis, semakin buruk kualitas udara.
+        </div>
+        <div class="chart-wrap" style="height:240px">
+          <canvas id="trendChart" role="img" aria-label="Grafik tren AQI 7 hari terakhir">Tren AQI mingguan.</canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: Polutan Breakdown -->
+      <div class="chart-card narrow">
+        <div class="chart-header">
+          <div class="chart-header-text">
+            <h2>Komposisi Polutan</h2>
+            <span class="chart-sub">Persentase saat ini</span>
+          </div>
+          <button class="info-btn" onclick="toggleInfo('info-donut')" title="Tentang grafik ini">ⓘ</button>
+        </div>
+        <div class="chart-info-panel" id="info-donut">
+          <strong>Cara membaca grafik ini</strong>
+          Grafik donat memperlihatkan proporsi kontribusi masing-masing polutan terhadap total polusi udara saat ini: PM2.5 (partikel halus), PM10 (partikel kasar), NO₂ (nitrogen dioksida), dan SO₂ (sulfur dioksida). Segmen yang lebih besar berarti polutan tersebut lebih dominan. Arahkan kursor ke segmen untuk melihat persentase tepat.
+        </div>
+        <div class="chart-legend" id="donut-legend"></div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="donutChart" role="img" aria-label="Komposisi polutan udara dalam persen">Komposisi polutan.</canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Chart PM2.5 Tren 7 Hari (full width) -->
+    <section class="charts-row charts-single">
+      <div class="chart-card" style="grid-column: 1 / -1;">
+        <div class="chart-header">
+          <div class="chart-header-text">
+            <h2>Tren PM2.5 7 Hari Terakhir</h2>
+            <span class="chart-sub">Konsentrasi partikel halus harian (&mu;g/m&sup3;)</span>
+          </div>
+          <button class="info-btn" onclick="toggleInfo('info-pm25')" title="Tentang grafik ini">ⓘ</button>
+        </div>
+        <div class="chart-info-panel" id="info-pm25">
+          <strong>Mengapa PM2.5 paling krusial?</strong>
+          PM2.5 adalah partikel dengan diameter &le;2,5 mikrometer, sangat halus hingga mampu menembus paru-paru dan masuk ke aliran darah. Dibanding polutan lain, PM2.5 adalah <strong>indikator terpenting</strong> kualitas udara karena berdampak langsung pada sistem pernapasan dan kardiovaskular. WHO menetapkan batas aman harian 15 &mu;g/m&sup3;. Grafik ini menunjukkan konsentrasi PM2.5 harian selama 7 hari terakhir; garis yang melampaui ambang batas WHO (garis putus merah) perlu diwaspadai.
+        </div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="pm25TrendChart" role="img" aria-label="Grafik tren PM2.5 7 hari terakhir">Tren PM2.5 mingguan.</canvas>
+        </div>
+      </div>
+    </section>
+    <section class="info-panel">
+      <div class="info-box">
+        <h3>&#9888; Rekomendasi Kesehatan</h3>
+        <p id="health-rec">Kualitas udara <strong>Sedang</strong>. Kelompok sensitif sebaiknya membatasi aktivitas luar ruangan yang berat.</p>
+      </div>
+      <div class="info-box">
+        <h3>&#128065; Kategori AQI</h3>
+        <div class="aqi-scale">
+          <div class="aqi-item good"><span>0&ndash;50</span><span>Baik</span></div>
+          <div class="aqi-item moderate"><span>51&ndash;100</span><span>Sedang</span></div>
+          <div class="aqi-item unhealthy"><span>101&ndash;200</span><span>Tidak Sehat</span></div>
+          <div class="aqi-item very-unhealthy"><span>201&ndash;300</span><span>Sangat Tidak Sehat</span></div>
+          <div class="aqi-item hazardous"><span>300+</span><span>Berbahaya</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chart 3: Perbandingan Kota (full width) -->
+    <section class="charts-row charts-single">
+      <div class="chart-card" style="grid-column: 1 / -1;">
+        <div class="chart-header">
+          <div class="chart-header-text">
+            <h2>Perbandingan AQI Antar Kota</h2>
+            <span class="chart-sub">Indeks Kualitas Udara hari ini</span>
+          </div>
+          <button class="info-btn" onclick="toggleInfo('info-kota')" title="Tentang grafik ini">ⓘ</button>
+        </div>
+        <div class="chart-info-panel" id="info-kota">
+          <strong>Cara membaca grafik ini</strong>
+          Grafik batang horizontal membandingkan nilai AQI hari ini di 5 kota besar yang dipantau. Panjang batang sebanding dengan tingkat polusi: makin panjang, makin tinggi AQI-nya. Setiap kota diberi warna berbeda untuk memudahkan identifikasi. Nilai AQI di atas 100 menandakan udara mulai tidak sehat, terutama bagi kelompok rentan.
+        </div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="kotaChart" role="img" aria-label="Perbandingan AQI antar kota">AQI kota-kota besar.</canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  
+  <footer class="footer">
+    <p>AQM 2026 | Data diambil dari World's Air Quality Index Project (WAQI)©.</p>
+  </footer>
+
+  <script>
+    // =====================
+    // WARNA LIGHT MODE
+    // =====================
+    const CHART_TICK   = '#5a6478';
+    const CHART_GRID   = 'rgba(0,0,0,0.06)';
+    const ACCENT_COLOR = '#00a688';
+    const ACCENT_BG    = 'rgba(0,166,136,0.12)';
+
+    // =====================
+    // DATA PER KOTA
+    // =====================
+    const kotaData = {
+      semarang: {
+        label: "Semarang, Jawa Tengah", aqi: 68, pm25: 32, pm10: 54, co: 0.7, humid: 70, temp: 30,
+        status: "Sedang", badgeClass: "badge-moderate",
+        rec: "Kualitas udara <strong>Sedang</strong>. Kelompok sensitif sebaiknya membatasi aktivitas luar ruangan yang berat.",
+        trendAqi:   [72, 68, 75, 80, 70, 65, 68],
+        trendPm25:  [36, 32, 38, 42, 34, 28, 32],
+        hourlyPm25: [22,20,18,17,16,18,24,32,40,42,38,35,32,36,38,40,38,35,32,30,28,26,24,22],
+        donutData:  [38, 32, 18, 12],
+      },
+      jakarta: {
+        label: "Jakarta, DKI Jakarta", aqi: 128, pm25: 65, pm10: 92, co: 1.4, humid: 75, temp: 33,
+        status: "Tidak Sehat*", badgeClass: "badge-usg",
+        rec: "<strong>Tidak Sehat</strong> untuk kelompok sensitif. Anak-anak dan lansia disarankan tetap di dalam ruangan.",
+        trendAqi:   [115, 130, 122, 145, 138, 120, 128],
+        trendPm25:  [58, 68, 62, 75, 72, 60, 65],
+        hourlyPm25: [52,48,44,42,40,45,62,80,95,98,90,85,80,88,92,100,96,88,78,70,65,60,56,52],
+        donutData:  [42, 28, 18, 12],
+      },
+      makassar: {
+        label: "Makassar, Sulawesi Selatan", aqi: 58, pm25: 26, pm10: 44, co: 0.6, humid: 74, temp: 31,
+        status: "Sedang", badgeClass: "badge-moderate",
+        rec: "Kualitas udara <strong>Sedang</strong>. Pertimbangkan mengurangi aktivitas fisik intens di luar ruangan.",
+        trendAqi:   [60, 55, 62, 70, 65, 58, 58],
+        trendPm25:  [28, 24, 30, 34, 28, 22, 26],
+        hourlyPm25: [18,16,15,14,13,15,20,28,34,36,32,30,26,28,30,32,30,28,26,24,22,20,19,18],
+        donutData:  [36, 34, 18, 12],
+      },
+      yogyakarta: {
+        label: "Yogyakarta, DIY", aqi: 45, pm25: 18, pm10: 35, co: 0.5, humid: 62, temp: 29,
+        status: "Baik", badgeClass: "badge-good",
+        rec: "Kualitas udara <strong>Baik</strong>. Nikmati aktivitas luar ruangan dengan aman.",
+        trendAqi:   [50, 48, 44, 52, 46, 42, 45],
+        trendPm25:  [22, 20, 18, 24, 20, 16, 18],
+        hourlyPm25: [12,11,10,10,9,10,14,20,24,26,22,20,18,20,22,24,22,20,18,16,15,14,13,12],
+        donutData:  [32, 36, 20, 12],
+      },
+      medan: {
+        label: "Medan, Sumatera Utara", aqi: 158, pm25: 82, pm10: 110, co: 1.8, humid: 80, temp: 34,
+        status: "Tidak Sehat", badgeClass: "badge-unhealthy",
+        rec: "<strong>Tidak Sehat</strong>. Semua orang sebaiknya menghindari aktivitas luar ruangan berkepanjangan. Gunakan masker.",
+        trendAqi:   [145, 162, 155, 170, 165, 150, 158],
+        trendPm25:  [72, 88, 80, 95, 90, 78, 82],
+        hourlyPm25: [65,60,55,52,50,55,72,90,108,112,105,98,92,100,90,82,76,72,68,65],
+        donutData:  [44, 26, 18, 12],
+      },
+    };
+
+    // =====================
+    // JAM & CLOCK
+    // =====================
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID');
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // =====================
+    // TOGGLE INFO PANEL
+    // =====================
+    function toggleInfo(id) {
+      const panel = document.getElementById(id);
+      panel.classList.toggle('visible');
+    }
+
+    // =====================
+    // CHART 1: TREND AQI
+    // Zona label di sumbu kanan: Baik (tengah 0–50 = 25), Sedang (tengah 50–100 = 75), Tidak Sehat (tengah 100–200 = 150)
+    // =====================
+    const trendLabels = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+
+    const aqiZoneDatasets = [
+      { label: 'Baik',        min: 0,   max: 50,  color: 'rgba(0,166,136,0.28)'  },
+      { label: 'Sedang',      min: 50,  max: 100, color: 'rgba(212,160,23,0.28)' },
+      { label: 'Tidak Sehat', min: 100, max: 200, color: 'rgba(201,64,64,0.28)'  },
+    ].map(z => ({
+      label: z.label,
+      data: trendLabels.map(() => z.max - z.min),
+      backgroundColor: z.color,
+      borderWidth: 0,
+      pointRadius: 0,
+      fill: true,
+      stack: 'zones',
+      order: 2,
+    }));
+
+    const trendChart = new Chart(trendCtx, {
+      type: 'bar',
+      data: {
+        labels: trendLabels,
+        datasets: [
+          ...aqiZoneDatasets,
+          {
+            type: 'line',
+            label: 'AQI',
+            data: kotaData.semarang.trendAqi,
+            borderColor: ACCENT_COLOR,
+            backgroundColor: 'rgba(0,0,0,0)',
+            borderWidth: 4,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: ACCENT_COLOR,
+            pointBorderWidth: 3,
+            pointRadius: 7,
+            tension: 0.4,
+            fill: false,
+            order: 1,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        clip: false,
+        layout: {
+          padding: { right: 72 }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            filter: item => item.dataset.type === 'line',
+          }
+        },
+        scales: {
+          y: {
+            stacked: true,
+            min: 0, max: 200,
+            grid:  { color: CHART_GRID },
+            ticks: {
+              color: CHART_TICK,
+              font: { size: 11 },
+              stepSize: 50,
+            },
+            title: {
+              display: true,
+              text: 'Nilai AQI',
+              color: CHART_TICK,
+              font: { size: 11, weight: '500' },
+              padding: { bottom: 4 },
+            }
+          },
+          yRight: {
+            type: 'linear',
+            position: 'right',
+            min: 0, max: 200,
+            display: false,
+          },
+          x: {
+            stacked: true,
+            grid:  { display: false },
+            ticks: { color: CHART_TICK, font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+    // Plugin: gambar label zona AQI langsung ke canvas, tanpa ticks Chart.js
+    Chart.register({
+      id: 'aqiZoneLabelPlugin',
+      afterDraw(chart) {
+        if (chart !== trendChart) return;
+        const yScale = chart.scales['y'];
+        const xScale = chart.scales['x'];
+        if (!yScale || !xScale) return;
+
+        const ctx = chart.ctx;
+        const zones = [
+          { label: 'Tidak Sehat', midVal: 150, color: '#c94040' },
+          { label: 'Sedang',      midVal: 75,  color: '#b08010' },
+          { label: 'Baik',        midVal: 25,  color: '#00a688' },
+        ];
+
+        const x = xScale.right + 8; // 8px dari tepi kanan plot area
+
+        ctx.save();
+        ctx.font = '600 10px Segoe UI, system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+
+        zones.forEach(({ label, midVal, color }) => {
+          const y = yScale.getPixelForValue(midVal);
+          ctx.fillStyle = color;
+          ctx.fillText(label, x, y);
+        });
+
+        ctx.restore();
+      }
+    });
+
+    // =====================
+    // CHART 2: DONUT
+    // =====================
+    const donutColors = ['#00a688', '#2f6fd4', '#d4a017', '#c94040'];
+    const donutLabels = ['PM2.5', 'PM10', 'NO2', 'SO2'];
+
+    function buildDonutLegend(data) {
+      const el = document.getElementById('donut-legend');
+      el.innerHTML = '';
+      donutLabels.forEach((l, i) => {
+        el.innerHTML += `<span class="legend-item"><span class="legend-dot" style="background:${donutColors[i]}"></span>${l} ${data[i]}%</span>`;
+      });
+    }
+    buildDonutLegend(kotaData.semarang.donutData);
+
+    const donutCtx = document.getElementById('donutChart').getContext('2d');
+    const donutChart = new Chart(donutCtx, {
+      type: 'doughnut',
+      data: {
+        labels: donutLabels,
+        datasets: [{
+          data: kotaData.semarang.donutData,
+          backgroundColor: donutColors,
+          borderWidth: 2,
+          borderColor: '#ffffff',
+          hoverOffset: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return ` ${context.label}: ${context.parsed}%`;
+              }
+            }
+          }
+        },
+        cutout: '65%',
+      }
+    });
+
+    // =====================
+    // CHART PM2.5 TREN 7 HARI
+    // =====================
+    const PM25_WHO_LIMIT = 15; // batas harian WHO (µg/m³)
+
+    const pm25TrendCtx = document.getElementById('pm25TrendChart').getContext('2d');
+    const pm25TrendChart = new Chart(pm25TrendCtx, {
+      type: 'line',
+      data: {
+        labels: trendLabels,
+        datasets: [
+          {
+            label: 'PM2.5 (µg/m³)',
+            data: kotaData.semarang.trendPm25,
+            borderColor: '#4f8ef7',
+            backgroundColor: 'rgba(79,142,247,0.12)',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#4f8ef7',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            label: 'Batas WHO',
+            data: trendLabels.map(() => PM25_WHO_LIMIT),
+            borderColor: 'rgba(201,64,64,0.7)',
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              color: CHART_TICK,
+              font: { size: 10 },
+              boxWidth: 14,
+              padding: 10,
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} µg/m³`
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            grid:  { color: CHART_GRID },
+            ticks: { color: CHART_TICK, font: { size: 11 } },
+            title: {
+              display: true,
+              text: 'µg/m³',
+              color: CHART_TICK,
+              font: { size: 11, weight: '500' },
+            }
+          },
+          x: {
+            grid:  { display: false },
+            ticks: { color: CHART_TICK, font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+    // =====================
+    // HELPER: warna berdasarkan kategori AQI
+    // =====================
+    function aqiColor(val) {
+      if (val <= 50)  return '#00a688'; // Baik
+      if (val <= 100) return '#d4a017'; // Sedang
+      if (val <= 150) return '#c96f2a'; // Tidak Sehat utk kelompok sensitif
+      if (val <= 200) return '#c94040'; // Tidak Sehat
+      if (val <= 300) return '#9b35b0'; // Sangat Tidak Sehat
+      return '#7d1b1b';                 // Berbahaya
+    }
+
+    // =====================
+    // CHART 3: KOTA COMPARE
+    // =====================
+    const kotaAqiData  = [68, 128, 58, 45, 158];
+    const kotaCtx = document.getElementById('kotaChart').getContext('2d');
+    const kotaChart = new Chart(kotaCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Semarang', 'Jakarta', 'Makassar', 'Yogya', 'Medan'],
+        datasets: [{
+          label: 'AQI',
+          data: kotaAqiData,
+          backgroundColor: kotaAqiData.map(v => aqiColor(v)),
+          borderRadius: 6,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            beginAtZero: true, max: 200,
+            grid:  { color: CHART_GRID },
+            ticks: { color: CHART_TICK, font: { size: 10 } }
+          },
+          y: {
+            grid:  { display: false },
+            ticks: { color: CHART_TICK, font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+    // =====================
+    // DARK MODE TOGGLE
+    // =====================
+    function getChartColors() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {
+        tick:   isDark ? '#8a94a8' : '#5a6478',
+        grid:   isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+        border: isDark ? '#1a1f2e' : '#ffffff',
+      };
+    }
+
+    function updateChartTheme() {
+      const c = getChartColors();
+      trendChart.options.scales.y.ticks.color      = c.tick;
+      trendChart.options.scales.y.grid.color       = c.grid;
+      trendChart.options.scales.y.title.color      = c.tick;
+      trendChart.options.scales.x.ticks.color      = c.tick;
+      trendChart.update('none');
+      pm25TrendChart.options.scales.y.ticks.color  = c.tick;
+      pm25TrendChart.options.scales.y.grid.color   = c.grid;
+      pm25TrendChart.options.scales.y.title.color  = c.tick;
+      pm25TrendChart.options.scales.x.ticks.color  = c.tick;
+      pm25TrendChart.options.plugins.legend.labels.color = c.tick;
+      pm25TrendChart.update('none');
+      donutChart.data.datasets[0].borderColor = c.border;
+      donutChart.update('none');
+      kotaChart.options.scales.x.ticks.color = c.tick;
+      kotaChart.options.scales.x.grid.color  = c.grid;
+      kotaChart.options.scales.y.ticks.color = c.tick;
+      kotaChart.update('none');
+    }
+
+    function toggleTheme() {
+      const html   = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        html.removeAttribute('data-theme');
+        document.getElementById('themeIcon').textContent  = '🌙';
+        document.getElementById('themeLabel').textContent = 'Dark';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        document.getElementById('themeIcon').textContent  = '☀️';
+        document.getElementById('themeLabel').textContent = 'Light';
+      }
+      updateChartTheme();
+    }
+
+    // =====================
+    // GANTI KOTA
+    // =====================
+    function gantiKota(kota) {
+      const d = kotaData[kota];
+      if (!d) return;
+
+      document.getElementById('kota-label').textContent  = d.label;
+      document.getElementById('aqi-val').textContent     = d.aqi;
+      document.getElementById('aqi-status').textContent  = d.status;
+      document.getElementById('aqi-status').className    = 'badge ' + d.badgeClass;
+      document.getElementById('pm25-val').textContent    = d.pm25;
+      document.getElementById('pm10-val').textContent    = d.pm10;
+      document.getElementById('co-val').textContent      = d.co;
+      document.getElementById('humid-val').textContent   = d.humid;
+      document.getElementById('temp-val').textContent    = d.temp;
+      document.getElementById('pm25-bar').style.width    = Math.min(d.pm25 / 150 * 100, 100) + '%';
+      document.getElementById('pm10-bar').style.width    = Math.min(d.pm10 / 150 * 100, 100) + '%';
+      document.getElementById('co-bar').style.width      = Math.min(d.co   / 5   * 100, 100) + '%';
+      document.getElementById('humid-bar').style.width   = d.humid + '%';
+      document.getElementById('temp-bar').style.width    = Math.min(d.temp / 50  * 100, 100) + '%';
+      document.getElementById('health-rec').innerHTML    = d.rec;
+
+      const aqiCard = document.querySelector('.aqi-card');
+      aqiCard.className = 'stat-card aqi-card';
+      if      (d.aqi <= 50)  aqiCard.classList.add('aqi-good');
+      else if (d.aqi <= 100) aqiCard.classList.add('aqi-moderate');
+      else if (d.aqi <= 150) aqiCard.classList.add('aqi-usg');
+      else if (d.aqi <= 200) aqiCard.classList.add('aqi-unhealthy');
+      else                   aqiCard.classList.add('aqi-hazardous');
+
+      trendChart.data.datasets[3].data = d.trendAqi;
+      trendChart.update();
+
+      pm25TrendChart.data.datasets[0].data = d.trendPm25;
+      pm25TrendChart.update();
+
+      donutChart.data.datasets[0].data = d.donutData;
+      donutChart.update();
+      buildDonutLegend(d.donutData);
+    }
+
+    // Init default kota
+    gantiKota('semarang');
+
+    // =====================
+    // SHARE FEATURE
+    // =====================
+    let activeKota = 'semarang';
+    const _gantiKota = gantiKota;
+    // Track kota aktif
+    function gantiKotaWrapped(k) { activeKota = k; _gantiKota(k); }
+    document.getElementById('kota').addEventListener('change', e => { activeKota = e.target.value; });
+
+    function getShareText() {
+      const d = kotaData[activeKota];
+      const emoji = d.aqi <= 50 ? '🟢' : d.aqi <= 100 ? '🟡' : d.aqi <= 150 ? '🟠' : d.aqi <= 200 ? '🔴' : '🟣';
+      const tips = {
+        'badge-good':     'Udara bersih, aman beraktivitas di luar!',
+        'badge-moderate': 'Tetap jaga kesehatan ya!',
+        'badge-usg':      'Kelompok sensitif sebaiknya kurangi aktivitas luar.',
+        'badge-unhealthy':'Gunakan masker jika keluar rumah.',
+        'badge-hazardous':'Hindari aktivitas di luar ruangan.',
+      };
+      const tip = tips[d.badgeClass] || 'Tetap jaga kesehatan!';
+      return `${emoji} Kualitas udara di ${d.label.split(',')[0]} saat ini: ${d.status} (AQI ${d.aqi}).\nPM2.5: ${d.pm25} \u03bcg/m\u00b3 | Suhu: ${d.temp}\u00b0C | Kelembapan: ${d.humid}%\n${tip}\n\nPantau terus via AQM Monitor \ud83c\udf0d`;
+    }
+
+    function renderShareCanvas() {
+      const d = kotaData[activeKota];
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = 800, H = 420;
+      canvas.width = W; canvas.height = H;
+
+      // Palet warna berdasar AQI
+      const palettes = {
+        good:      { bg1:'#003d2e', bg2:'#005c42', accent:'#00e8b8', badge:'#00a688', label:'Baik' },
+        moderate:  { bg1:'#2e1f00', bg2:'#4a3200', accent:'#ffc733', badge:'#d4a017', label:'Sedang' },
+        usg:       { bg1:'#2e1200', bg2:'#4a1d00', accent:'#ff8c3a', badge:'#c96f2a', label:'Tidak Sehat*' },
+        unhealthy: { bg1:'#2e0000', bg2:'#4a0000', accent:'#ff5555', badge:'#c94040', label:'Tidak Sehat' },
+        hazardous: { bg1:'#1a0020', bg2:'#2d0035', accent:'#cc66ff', badge:'#9b35b0', label:'Berbahaya' },
+      };
+      let p = d.aqi <= 50 ? palettes.good : d.aqi <= 100 ? palettes.moderate :
+              d.aqi <= 150 ? palettes.usg  : d.aqi <= 200 ? palettes.unhealthy : palettes.hazardous;
+
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, W, H);
+      grad.addColorStop(0, p.bg1);
+      grad.addColorStop(1, p.bg2);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Dekorasi lingkaran besar semi-transparan
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      ctx.fillStyle = p.accent;
+      ctx.beginPath(); ctx.arc(W - 80, 80, 200, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(60, H - 40, 140, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      // Logo AQM kiri atas
+      ctx.save();
+      ctx.fillStyle = p.accent;
+      ctx.font = 'bold 22px Segoe UI, system-ui, sans-serif';
+      ctx.fillText('AQM', 44, 52);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.font = '13px Segoe UI, system-ui, sans-serif';
+      ctx.fillText('Air Quality Monitor', 44, 70);
+      ctx.restore();
+
+      // Nama kota
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.font = '15px Segoe UI, system-ui, sans-serif';
+      ctx.fillText(d.label.toUpperCase(), 44, 130);
+      ctx.restore();
+
+      // Nilai AQI besar
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 110px Segoe UI, system-ui, sans-serif';
+      ctx.fillText(d.aqi, 40, 270);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '18px Segoe UI, system-ui, sans-serif';
+      ctx.fillText('AQI', 44, 300);
+      ctx.restore();
+
+      // Badge status
+      const badgeX = 44, badgeY = 320;
+      const badgeText = d.status;
+      ctx.save();
+      ctx.font = 'bold 14px Segoe UI, system-ui, sans-serif';
+      const bW = ctx.measureText(badgeText).width + 28;
+      ctx.fillStyle = p.accent + '30';
+      ctx.strokeStyle = p.accent;
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, badgeX, badgeY, bW, 30, 15);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = p.accent;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(badgeText, badgeX + 14, badgeY + 15);
+      ctx.restore();
+
+      // Panel stat kanan
+      const stats = [
+        { icon: '💨', label: 'PM2.5', val: d.pm25 + ' µg/m³' },
+        { icon: '🌡️', label: 'Suhu',  val: d.temp + '°C' },
+        { icon: '💧', label: 'Kelembapan', val: d.humid + '%' },
+      ];
+      const panelX = W - 260, panelY = 120;
+      stats.forEach((s, i) => {
+        const y = panelY + i * 90;
+        // Kotak
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 1;
+        roundRect(ctx, panelX, y, 210, 70, 12);
+        ctx.fill(); ctx.stroke();
+        // Label
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.font = '12px Segoe UI, system-ui, sans-serif';
+        ctx.textBaseline = 'top';
+        ctx.fillText(s.icon + ' ' + s.label, panelX + 16, y + 12);
+        // Nilai
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 22px Segoe UI, system-ui, sans-serif';
+        ctx.fillText(s.val, panelX + 16, y + 34);
+        ctx.restore();
+      });
+
+      // Garis bawah + watermark
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(44, H - 44); ctx.lineTo(W - 44, H - 44); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '12px Segoe UI, system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('aqm-monitor.id', 44, H - 24);
+      const today = new Date().toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+      ctx.textAlign = 'right';
+      ctx.fillText(today, W - 44, H - 24);
+      ctx.restore();
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function bukaShare() {
+      renderShareCanvas();
+      document.getElementById('shareText').textContent = getShareText();
+      document.getElementById('copyNotif').classList.remove('show');
+      document.getElementById('shareOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function tutupShare(e) {
+      if (e && e.target !== document.getElementById('shareOverlay')) return;
+      document.getElementById('shareOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function unduhGambar() {
+      const canvas = document.getElementById('shareCanvas');
+      const a = document.createElement('a');
+      const d = kotaData[activeKota];
+      a.download = `aqm-${d.label.split(',')[0].toLowerCase().replace(/\s/g,'-')}-${Date.now()}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    }
+
+    function salinTeks() {
+      const teks = getShareText();
+      navigator.clipboard.writeText(teks).then(() => {
+        const n = document.getElementById('copyNotif');
+        n.classList.add('show');
+        setTimeout(() => n.classList.remove('show'), 2500);
+      });
+    }
+
+    function shareWA() {
+      const teks = encodeURIComponent(getShareText());
+      window.open('https://wa.me/?text=' + teks, '_blank');
+    }
+
+    function shareTwitter() {
+      const d = kotaData[activeKota];
+      const teks = encodeURIComponent(`Kualitas udara di ${d.label.split(',')[0]}: ${d.status} (AQI ${d.aqi}). Pantau via AQM Monitor!`);
+      window.open('https://twitter.com/intent/tweet?text=' + teks, '_blank');
+    }
+
+    // Tutup modal dengan Escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') tutupShare(null); });
+  </script>
+</body>
+</html>
